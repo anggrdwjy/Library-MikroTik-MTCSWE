@@ -2,17 +2,17 @@
 
 ## Daftar Isi
 
-- Modul 1 — Introduction
-- Modul 2 — MTU
-- Modul 3 — VLAN
-- Modul 4 — Spanning Tree Protocol
-- Modul 5 — Link Aggregation
-- Modul 6 — Port Isolation
-- Modul 7 — QoS
-- Modul 8 — Layer 2 Security
-- Modul 9 — PoE
-- Modul 10 — Tools
-- Modul 11 — SwOS
+- [Modul 1 — Introduction](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-1--introduction-konsep-dasar-layer-2-forwarding)
+- [Modul 2 — MTU](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-2--mtu-pengelolaan-mtu-l2mtu-dan-jumbo-frame)
+- [Modul 3 — VLAN](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-3--vlan-implementasi-vlan-8021q-dan-8021ad)
+- [Modul 4 — Spanning Tree Protocol](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-4--spanning-tree-protocol-pencegahan-loop-dengan-mempertahankan-redundansi)
+- [Modul 5 — Link Aggregation](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-5--link-aggregation-penggabungan-tautan-untuk-kapasitas-dan-redundansi)
+- [Modul 6 — Port Isolation](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-6--port-isolation-isolasi-port-tanpa-penambahan-vlan-berlebihan)
+- [Modul 7 — QoS](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-7--qos-penerapan-quality-of-service-pada-layer-2)
+- [Modul 8 — Layer 2 Security](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-8--layer-2-security-pengamanan-jaringan-layer-2)
+- [Modul 9 — PoE](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-9--poe-penyaluran-daya-melalui-kabel-jaringan)
+- [Modul 10 — Tools](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-10--tools-diagnostik-dan-pemantauan-layer-2)
+- [Modul 11 — SwOS](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-11--swos-switching-dengan-sistem-operasi-ringan)
 
 ## Modul 1 — Introduction: Konsep Dasar Layer 2 Forwarding
 
