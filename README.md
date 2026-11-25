@@ -1,5 +1,19 @@
 # MTCSWE — Implementation and Operation Guide
 
+## Daftar Isi
+
+- Modul 1 — Introduction
+- Modul 2 — MTU
+- Modul 3 — VLAN
+- Modul 4 — Spanning Tree Protocol
+- Modul 5 — Link Aggregation
+- Modul 6 — Port Isolation
+- Modul 7 — QoS
+- Modul 8 — Layer 2 Security
+- Modul 9 — PoE
+- Modul 10 — Tools
+- Modul 11 — SwOS
+
 ## Modul 1 — Introduction: Konsep Dasar Layer 2 Forwarding
 
 **Tujuan:** Memahami cara switch meneruskan frame, konsep unicast, multicast, dan broadcast, pembelajaran MAC address, serta perbedaan antara bridge pada RouterOS, switch chip pada RouterBOARD, dan SwOS.
@@ -10,7 +24,7 @@
 
 - **Unicast:** Komunikasi dari satu pengirim kepada satu penerima. Switch mempelajari MAC tujuan dan meneruskan frame ke port yang sesuai.
 - **Broadcast:** Komunikasi kepada seluruh port dalam broadcast domain yang sama. Contohnya adalah ARP dan DHCP Discover. Broadcast yang berlebihan menyebabkan broadcast storm.
-- **Multicast:** Komunikasi kepada sekelompok penerima. Contohnya adalah streaming IPTV dan routing protocol. Tanpa pengendalian, multicast diperlakukan seperti broadcast.
+- **Multicast:** Komunikasi kepada sekelompok penerima. Contohnya adalah aliran IPTV dan routing protocol. Tanpa pengendalian, multicast diperlakukan seperti broadcast.
 - **MAC Learning:** Switch mencatat MAC sumber, port, dan VLAN pada MAC table atau bridge host table. Entri tersebut akan kedaluwarsa apabila tidak terdapat traffic.
 - **Bridge dan Switch Chip:** Bridge pada CPU RouterOS bersifat fleksibel, tetapi memiliki keterbatasan throughput. Switch chip meneruskan frame pada perangkat keras sehingga memiliki throughput yang lebih tinggi serta mendukung fitur seperti VLAN pada perangkat keras, access control list, dan traffic storm control. Pada perangkat CRS, pemanfaatan switch chip sangat disarankan.
 
@@ -51,7 +65,7 @@
 | Bridge | Bridge berbasis CPU dengan pengaturan `use-ip-firewall` dan `fast-forward` | Bridge dengan hardware offload otomatis dan pengaturan `hw-offload` per port |
 | MAC Learning | MAC table melalui `/interface bridge host`, kapasitas bergantung pada model | MAC table melalui perintah yang sama, dengan peningkatan stabilitas dan kapasitas pada CRS3xx dan CRS5xx |
 | Switch Chip | Konfigurasi melalui `/interface ethernet switch` dengan fitur terbatas pada beberapa model | Konfigurasi switch chip terintegrasi dengan bridge, hardware offload untuk VLAN dan filter lebih konsisten |
-| Interface Settings | Pengaturan `hw` pada bridge port untuk mengaktifkan atau menonaktifkan offload | Pengaturan `hw-offload` dan `edge` pada bridge port, serta status offload terlihat pada `/interface bridge port print` |
+| Interface settings | Pengaturan `hw` pada bridge port untuk mengaktifkan atau menonaktifkan offload | Pengaturan `hw-offload` dan `edge` pada bridge port, serta status offload terlihat pada `/interface bridge port print` |
 
 **Konfigurasi RouterOS v6**
 
@@ -73,18 +87,17 @@
 /interface bridge port print detail where hw-offload=yes
 ```
 
-**Catatan Migrasi:** Pada migrasi dari v6 ke v7, perlu diperiksa status hardware offload pada setiap port. Port yang pada v6 menggunakan `hw=no` perlu disesuaikan pada v7 menjadi `hw-offload=no` apabila memang diperlukan untuk fitur bridge filter tertentu. Pencadangan dan export konfigurasi perlu dilakukan sebelum migrasi.
+**Catatan Migrasi:** Pada migrasi dari v6 ke v7, perlu diperiksa status hardware offload pada setiap port. Port yang pada v6 menggunakan `hw=no` perlu disesuaikan pada v7 menjadi `hw-offload=no` apabila memang diperlukan untuk fitur bridge filter tertentu. Backup dan export konfigurasi perlu dilakukan sebelum migrasi.
 
-### Studi Kasus: Kantor dengan 20 PC, 1 Server, dan 1 Printer
+### Studi Kasus: Kantor dengan 20 komputer, 1 Server, dan 1 Printer
 
-Sebuah kantor memasang SW-CORE CRS326. Seluruh PC berada pada ether1 hingga ether20, server pada ether21, dan printer pada ether22. Pada tahap awal, seluruh perangkat berada dalam satu bridge tanpa VLAN. Setelah tiga PC dihubungkan, administrator memeriksa `/interface bridge host print` dan memastikan MAC PC telah dipelajari. Komunikasi ping antar PC berhasil.
+Sebuah kantor memasang SW-CORE CRS326. Seluruh komputer berada pada ether1 hingga ether20, server pada ether21, dan printer pada ether22. Pada tahap awal, seluruh perangkat berada dalam satu bridge tanpa VLAN. Setelah tiga komputer dihubungkan, administrator memeriksa `/interface bridge host print` dan memastikan MAC komputer telah dipelajari. Komunikasi ping antar komputer berhasil.
 
 Pada hari berikutnya, printer tidak dapat dijangkau melalui ping. Setelah dilakukan pemeriksaan, diketahui bahwa ether22 berada dalam kondisi disabled karena port tersebut sebelumnya digunakan untuk pengujian PoE dan belum diaktifkan kembali. Solusi yang diterapkan adalah mengaktifkan kembali interface tersebut dan memeriksa host table.
 
 **Pembelajaran operasional:** MAC table merupakan instrumen diagnostik pertama untuk permasalahan Layer 2. Apabila MAC tidak dipelajari, permasalahan umumnya terdapat pada lapisan fisik atau port belum dimasukkan ke dalam bridge.
 
-> **Kesalahan yang sering terjadi pada Modul 1:** Port tidak ditambahkan ke bridge sehingga komunikasi tidak dapat berlangsung. Selain itu, pembuatan dua bridge yang saling tumpang tindih dapat menyebabkan loop. Disarankan untuk menggunakan satu bridge utama pada setiap switch, kecuali terdapat alasan khusus.
-
+> **Kesalahan yang sering terjadi pada Modul 1:** Port tidak ditambahkan ke bridge sehingga komunikasi tidak dapat berlangsung. Selain hal tersebut, pembuatan dua bridge yang saling tumpang tindih dapat menyebabkan loop. Disarankan untuk menggunakan satu bridge utama pada setiap switch, kecuali terdapat alasan khusus.
 
 ## Modul 2 — MTU: Pengelolaan MTU, L2MTU, dan Jumbo Frame
 
@@ -96,7 +109,7 @@ Pada hari berikutnya, printer tidak dapat dijangkau melalui ping. Setelah dilaku
 
 - **MTU:** Ukuran maksimum payload Layer 3 (IP) yang dapat dikirim tanpa fragmentasi. Nilai standar Ethernet adalah 1500 byte.
 - **L2MTU:** Ukuran maksimum frame Layer 2 termasuk header Ethernet dan tag VLAN. Nilai L2MTU harus lebih besar daripada MTU. Sebagai contoh, MTU 1500 memerlukan L2MTU minimal 1500 ditambah header dan tag VLAN.
-- **Jumbo Frame:** Frame dengan ukuran di atas 1500 byte, umumnya 9000 byte. Jumbo frame bermanfaat untuk storage, iSCSI, pencadangan, dan transfer antar server. Jumbo frame harus didukung secara end-to-end, yaitu pada NIC, switch, dan server.
+- **Jumbo Frame:** Frame dengan ukuran di atas 1500 byte, umumnya 9000 byte. Jumbo frame bermanfaat untuk storage, iSCSI, backup, dan transfer antar server. Jumbo frame harus didukung secara end-to-end, yaitu pada NIC, switch, dan server.
 - **Dampak Ketidakkonsistenan MTU:** Apabila satu sisi menggunakan jumbo frame dan sisi lain menggunakan standar, paket berukuran besar akan dibuang atau terfragmentasi. Gejalanya antara lain ping berukuran kecil berhasil, ping berukuran besar gagal, situs web tertentu tidak dapat dibuka, dan VPN terasa lambat.
 
 ### Implementasi
@@ -161,9 +174,9 @@ Pada hari berikutnya, printer tidak dapat dijangkau melalui ping. Setelah dilaku
 
 **Catatan Migrasi:** Setelah migrasi ke v7, perlu dilakukan pemeriksaan ulang L2MTU pada seluruh uplink dan server. Nilai yang pada v6 tidak diterapkan secara penuh dapat menjadi aktif pada v7 sehingga perlu dilakukan pengujian ping do-not-fragment pada jalur server dan antar switch.
 
-### Studi Kasus: Pencadangan Server yang Lambat dan Sering Gagal
+### Studi Kasus: Backup Server yang Lambat dan Sering Gagal
 
-Server pencadangan pada ether21 dan NAS pada ether22 sering mengalami kegagalan saat mentransfer berkas berukuran di atas 100 MB. Ping standar berhasil. Setelah dilakukan pemeriksaan, diketahui bahwa server telah menggunakan MTU 9000, sedangkan switch masih menggunakan MTU 1500. Setelah L2MTU switch ditingkatkan menjadi 9216 dan MTU bridge disesuaikan, throughput pencadangan meningkat dari 80 Mbps menjadi 800 Mbps dan tidak lagi terputus.
+Server backup pada ether21 dan NAS pada ether22 sering mengalami kegagalan saat mentransfer berkas berukuran di atas 100 MB. Ping standar berhasil. Setelah dilakukan pemeriksaan, diketahui bahwa server telah menggunakan MTU 9000, sedangkan switch masih menggunakan MTU 1500. Setelah L2MTU switch ditingkatkan menjadi 9216 dan MTU bridge disesuaikan, throughput backup meningkat dari 80 Mbps menjadi 800 Mbps dan tidak lagi terputus.
 
 **Pembelajaran operasional:** Jumbo frame hanya diaktifkan pada jalur yang memerlukan, yaitu antar server dan antar switch. Pengujian dilakukan dengan ping do-not-fragment dan didokumentasikan.
 
@@ -179,7 +192,7 @@ Server pencadangan pada ether21 dan NAS pada ether22 sering mengalami kegagalan 
 
 ### Konsep Utama
 
-- **Access / Untagged:** Port untuk perangkat akhir seperti PC, printer, dan kamera. Frame yang keluar tidak memiliki tag, sedangkan frame yang masuk diberi PVID.
+- **Access / Untagged:** Port untuk perangkat akhir seperti komputer, printer, dan kamera. Frame yang keluar tidak memiliki tag, sedangkan frame yang masuk diberi PVID.
 - **Trunk / Tagged:** Port antar switch atau menuju access point dan router. Port trunk membawa banyak VLAN dengan tag.
 - **PVID:** VLAN yang diberikan kepada frame untagged yang masuk melalui port access.
 - **Bridge VLAN Filtering:** Metode yang direkomendasikan pada RouterOS v7 untuk VLAN pada bridge. Satu bridge menggunakan satu tabel VLAN.
@@ -306,12 +319,11 @@ Contoh: ether1 hingga ether4 merupakan access VLAN 10, ether5 hingga ether6 meru
 
 ### Studi Kasus: Institusi Pendidikan dengan Tiga Jaringan Terpisah
 
-Sebuah institusi pendidikan memiliki satu switch core dan dua switch access. Kebutuhan yang ditetapkan adalah VLAN 10 untuk guru dan tata usaha, VLAN 20 untuk siswa melalui WiFi, dan VLAN 30 untuk CCTV. Pada kondisi awal, seluruh jaringan tercampur sehingga siswa dapat mengakses server nilai. Setelah implementasi bridge VLAN filtering dan firewall antar VLAN pada router, permasalahan tersebut terselesaikan. VLAN 20 tidak diizinkan menuju VLAN 10, tetapi diizinkan menuju internet. Access point pada trunk membawa VLAN 10 dan 20 dengan SSID terpisah. CCTV pada VLAN 30 tidak diizinkan menuju internet.
+Sebuah institusi pendidikan memiliki satu switch core dan dua switch access. Kebutuhan yang ditetapkan adalah VLAN 10 untuk guru dan tata usaha, VLAN 20 untuk siswa melalui Wi-Fi, dan VLAN 30 untuk CCTV. Pada kondisi awal, seluruh jaringan tercampur sehingga siswa dapat mengakses server nilai. Setelah implementasi bridge VLAN filtering dan firewall antar VLAN pada router, permasalahan tersebut terselesaikan. VLAN 20 tidak diizinkan menuju VLAN 10, tetapi diizinkan menuju internet. Access point pada trunk membawa VLAN 10 dan 20 dengan SSID terpisah. CCTV pada VLAN 30 tidak diizinkan menuju internet.
 
 **Aspek operasional:** Setiap penambahan kelas baru hanya memerlukan penambahan port access dengan PVID yang sesuai dan memastikan port trunk telah tagged untuk VLAN tersebut.
 
-> **Kesalahan yang sering terjadi pada Modul 3:** Mengaktifkan `vlan-filtering=yes` sebelum tabel VLAN lengkap sehingga akses terputus dan diperlukan reset melalui MAC WinBox. Disarankan untuk selalu menyiapkan akses MAC atau console serta pencadangan sebelum mengaktifkan filtering.
-
+> **Kesalahan yang sering terjadi pada Modul 3:** Mengaktifkan `vlan-filtering=yes` sebelum tabel VLAN lengkap sehingga akses terputus dan diperlukan reset melalui MAC WinBox. Disarankan untuk selalu menyiapkan akses MAC atau console serta backup sebelum mengaktifkan filtering.
 
 ## Modul 4 — Spanning Tree Protocol: Pencegahan Loop dengan Mempertahankan Redundansi
 
@@ -422,8 +434,7 @@ Sebuah gedung pendidikan memiliki dua uplink antar lantai untuk redundansi. Pada
 
 **Pembelajaran operasional:** RSTP atau MSTP harus selalu diaktifkan pada seluruh switch, root harus ditentukan secara eksplisit, dan STP tidak boleh dinonaktifkan untuk memperoleh kecepatan sesaat.
 
-> **Aspek operasional STP:** Nilai priority default 0x8000 tidak boleh dibiarkan sama pada seluruh switch. Root dan secondary harus ditentukan. Dokumentasi mengenai switch yang berperan sebagai root pada setiap gedung perlu dipelihara. Topologi STP perlu diperiksa setiap bulan atau setelah terjadi perubahan kabel.
-
+> **Aspek operasional STP:** Nilai default priority 0x8000 tidak boleh dibiarkan sama pada seluruh switch. Root dan secondary harus ditentukan. Dokumentasi mengenai switch yang berperan sebagai root pada setiap gedung perlu dipelihara. Topologi STP perlu diperiksa setiap bulan atau setelah terjadi perubahan kabel.
 
 ## Modul 5 — Link Aggregation: Penggabungan Tautan untuk Kapasitas dan Redundansi
 
@@ -485,7 +496,7 @@ Sebuah gedung pendidikan memiliki dua uplink antar lantai untuk redundansi. Pada
 | Mode Bonding | Mode 802.3ad, balance-rr, active-backup, balance-xor, broadcast tersedia | Mode yang sama tersedia, dengan negosiasi LACP yang lebih stabil |
 | LACP | LACP tersedia dengan `lacp-rate` dan `transmit-hash-policy` | LACP tersedia dengan parameter yang sama, ditambah status LACP yang lebih rinci pada monitor |
 | Transmit Hash Policy | Kebijakan `layer-2`, `layer-3-and-4` tersedia | Kebijakan yang sama tersedia, dengan distribusi per flow yang lebih konsisten pada CRS |
-| Monitoring | Monitoring melalui `/interface bonding monitor` dengan informasi terbatas | Monitoring melalui perintah yang sama, dengan informasi `lacp-system-id` dan status slave yang lebih lengkap |
+| Pemantauan | Monitoring melalui `/interface bonding monitor` dengan informasi terbatas | Monitoring melalui perintah yang sama, dengan informasi `lacp-system-id` dan status slave yang lebih lengkap |
 
 **Konfigurasi RouterOS v6**
 
@@ -506,9 +517,9 @@ Sebuah gedung pendidikan memiliki dua uplink antar lantai untuk redundansi. Pada
 
 **Catatan Migrasi:** Konfigurasi bonding pada v6 dapat dipindahkan ke v7 tanpa perubahan sintaks yang signifikan. Yang perlu diperhatikan adalah port fisik tidak dimasukkan ke bridge, yang dimasukkan adalah interface bonding. Kedua sisi harus menggunakan mode yang sama, yaitu LACP dengan LACP atau static dengan static.
 
-### Studi Kasus: Uplink 1 Gbps Tidak Mencukupi untuk 60 PC
+### Studi Kasus: Uplink 1 Gbps Tidak Mencukupi untuk 60 komputer
 
-Laboratorium komputer dengan 60 PC sering mengalami kelambatan saat seluruh PC mengunduh materi secara bersamaan. Uplink 1 Gbps dari access menuju core menjadi bottleneck. Administrator menggabungkan 2x 1 Gbps menjadi bond 2 Gbps dengan LACP. Hasilnya, throughput meningkat dan saat satu kabel dilepas untuk pemeliharaan, jaringan tetap beroperasi.
+Laboratorium komputer dengan 60 komputer sering mengalami kelambatan saat seluruh komputer mengunduh materi secara bersamaan. Uplink 1 Gbps dari access menuju core menjadi bottleneck. Administrator menggabungkan 2x 1 Gbps menjadi bond 2 Gbps dengan LACP. Hasilnya, throughput meningkat dan saat satu kabel dilepas untuk pemeliharaan, jaringan tetap beroperasi.
 
 **Pembelajaran operasional:** Bonding tidak hanya menambah bandwidth, tetapi juga menyediakan redundansi. Pengujian failover perlu dilakukan dengan melepas satu kabel secara sengaja pada jam pemeliharaan.
 
@@ -526,7 +537,7 @@ Laboratorium komputer dengan 60 PC sering mengalami kelambatan saat seluruh PC m
 - **Bridge Horizon:** Port dengan nilai horizon yang sama tidak dapat saling berkomunikasi pada Layer 2. Port dengan nilai horizon yang berbeda dapat saling berkomunikasi. Metode ini sederhana dan bekerja pada bridge.
 - **Switch Port Isolation:** Fitur perangkat keras pada switch chip untuk isolasi yang lebih efisien, termasuk private VLAN sederhana.
 
-### Implementasi: Bridge Horizon untuk WiFi Tamu dan Fasilitas Penginapan
+### Implementasi: Bridge Horizon untuk Wi-Fi Tamu dan Fasilitas Penginapan
 
 ```routeros
 # Contoh: ether5 dan ether6 merupakan kamar atau klien tamu yang harus terisolasi
@@ -681,7 +692,7 @@ Pengelola apartemen memasang satu switch untuk 12 kamar. Pada kondisi awal, anta
 
 ### Studi Kasus: Rapat Daring yang Selalu Terputus pada Jam Pengunduhan
 
-Sebuah kantor dengan 30 staf mengalami gangguan pada rapat daring setiap pukul 10.00 karena pada jam tersebut terjadi pencadangan dan pengunduhan besar. Rapat daring selalu terputus. Administrator menerapkan prioritas 802.1p untuk traffic Zoom dan VoIP serta pembatasan 20 Mbps per port untuk pengguna yang melakukan pengunduhan. Setelah penerapan tersebut, rapat menjadi stabil meskipun pengunduhan tetap berlangsung.
+Sebuah kantor dengan 30 staf mengalami gangguan pada rapat daring setiap pukul 10.00 karena pada jam tersebut terjadi backup dan pengunduhan besar. Rapat daring selalu terputus. Administrator menerapkan prioritas 802.1p untuk traffic Zoom dan VoIP serta pembatasan 20 Mbps per port untuk pengguna yang melakukan pengunduhan. Setelah penerapan tersebut, rapat menjadi stabil meskipun pengunduhan tetap berlangsung.
 
 **Pembelajaran operasional:** QoS tidak menambah bandwidth, tetapi mengatur traffic yang didahulukan saat terjadi perebutan bandwidth. Pengujian QoS perlu dilakukan pada saat jaringan sibuk, bukan pada saat jaringan sepi.
 
@@ -761,7 +772,7 @@ Sebuah kantor dengan 30 staf mengalami gangguan pada rapat daring setiap pukul 1
 
 ### 7. Switch Security
 
-Switch security mencakup penggantian password default, penonaktifan service yang tidak digunakan, pembatasan akses manajemen hanya melalui VLAN manajemen, dan pencatatan log secara berkala. Akses manajemen tidak boleh dibuka melalui VLAN pengguna.
+Switch security mencakup penggantian default password, penonaktifan service yang tidak digunakan, pembatasan akses manajemen hanya melalui VLAN manajemen, dan pencatatan log secara berkala. Akses manajemen tidak boleh dibuka melalui VLAN pengguna.
 
 ```routeros
 # Contoh penonaktifan service yang tidak digunakan
@@ -816,7 +827,7 @@ Switch security mencakup penggantian password default, penonaktifan service yang
 
 ### Studi Kasus: Jaringan Institusi Pendidikan yang Tidak Dapat Digunakan Akibat DHCP Palsu dan Loop
 
-Dua insiden terjadi dalam satu minggu. Pertama, seorang siswa membawa router WiFi rumahan dan menghubungkannya ke jaringan sekolah. Router tersebut menjadi DHCP server liar sehingga seluruh PC memperoleh alamat IP yang salah dan tidak dapat mengakses internet. Kedua, kabel patch yang salah terhubung menyebabkan loop. Administrator mengaktifkan DHCP snooping dengan hanya port uplink yang bersifat trusted, BPDU guard pada seluruh port access, loop protect, dan traffic storm control. Setelah penerapan tersebut, saat terdapat router liar, port secara otomatis diblokir dan log mencatat kejadian tersebut. Saat terjadi loop, port dinonaktifkan selama 5 menit dan administrator memperoleh notifikasi.
+Dua insiden terjadi dalam satu minggu. Pertama, seorang siswa membawa router Wi-Fi rumahan dan menghubungkannya ke jaringan sekolah. Router tersebut menjadi DHCP server liar sehingga seluruh komputer memperoleh alamat IP yang salah dan tidak dapat mengakses internet. Kedua, kabel patch yang salah terhubung menyebabkan loop. Administrator mengaktifkan DHCP snooping dengan hanya port uplink yang bersifat trusted, BPDU guard pada seluruh port access, loop protect, dan traffic storm control. Setelah penerapan tersebut, saat terdapat router liar, port secara otomatis diblokir dan log mencatat kejadian tersebut. Saat terjadi loop, port dinonaktifkan selama 5 menit dan administrator memperoleh notifikasi.
 
 **Pembelajaran operasional:** Keamanan Layer 2 harus diaktifkan sebelum insiden terjadi, bukan setelah insiden. DHCP snooping, BPDU guard, dan loop protect perlu diaktifkan pada seluruh port access sejak awal.
 
@@ -909,16 +920,16 @@ Sebuah hotel memasang dua switch PoE untuk 24 access point dan 16 kamera. Total 
 
 **Ruang lingkup sesuai outline:** Layer 2 diagnostic tools dan port mirroring.
 
-### Tools yang Perlu Dikuasai
+### Perangkat yang Perlu Dikuasai
 
 | Tool | Fungsi | Perintah Contoh |
 | --- | --- | --- |
 | Torch | Menampilkan traffic real-time per interface | `/tool torch ether1` |
-| Packet Sniffer | Menangkap paket untuk analisis | `/tool sniffer start interface=ether1` |
+| Penangkap Paket (Packet Sniffer) | Menangkap paket untuk analisis | `/tool sniffer start interface=ether1` |
 | MAC Scan / Neighbor | Mencari perangkat MikroTik pada Layer 2 | `/tool mac-scan, /ip neighbor print` |
 | Ping / Bandwidth Test | Menguji konektivitas dan throughput | `/tool ping, /tool bandwidth-test` |
-| Port Mirroring | Menduplikasi traffic ke port monitoring | `/interface ethernet switch set mirror-source, mirror-target` |
-| Cable Test | Menguji kabel dan panjang kabel | `/interface ethernet cable-test ether1` |
+| Port Mirroring | Menduplikasi traffic ke port pemantauan | `/interface ethernet switch set mirror-source, mirror-target` |
+| Pengujian Kabel (Cable Test) | Menguji kabel dan panjang kabel | `/interface ethernet cable-test ether1` |
 
 ### Implementasi: Port Mirroring untuk Troubleshooting
 
@@ -953,9 +964,9 @@ Sebuah hotel memasang dua switch PoE untuk 24 access point dan 16 kamera. Total 
 | Aspek | RouterOS v6 | RouterOS v7 |
 | --- | --- | --- |
 | Torch | Torch tersedia dengan filter interface, MAC, dan protokol | Torch tersedia dengan filter yang sama, ditambah tampilan yang lebih rinci dan stabil |
-| Packet Sniffer | Sniffer tersedia dengan filter interface dan streaming ke Wireshark | Sniffer tersedia dengan sintaks yang sama, ditambah `filter-stream` dan penyimpanan berkas pcap yang lebih andal |
+| Penangkap Paket (Packet Sniffer) | Sniffer tersedia dengan filter interface dan aliran ke Wireshark | Sniffer tersedia dengan sintaks yang sama, ditambah `filter-stream` dan penyimpanan file pcap yang lebih andal |
 | MAC Scan dan Neighbor | MAC scan melalui `/tool mac-scan` dan neighbor melalui `/ip neighbor print` | Perintah yang sama tersedia, dengan deteksi perangkat MikroTik yang lebih cepat |
-| Cable Test | Cable test tersedia pada sebagian model dengan informasi pair | Cable test tersedia dengan sintaks yang sama, dengan informasi panjang kabel dan status pair yang lebih lengkap pada CRS3xx |
+| Pengujian Kabel (Cable Test) | Cable test tersedia pada sebagian model dengan informasi pair | Cable test tersedia dengan sintaks yang sama, dengan informasi panjang kabel dan status pair yang lebih lengkap pada CRS3xx |
 | Port Mirroring | Port mirroring melalui `/interface ethernet switch set mirror-source` dan `mirror-target` | Port mirroring melalui perintah yang sama, dengan dukungan egress dan ingress yang lebih konsisten |
 
 **Konfigurasi RouterOS v6**
@@ -979,21 +990,20 @@ Sebuah hotel memasang dua switch PoE untuk 24 access point dan 16 kamera. Total 
 /interface ethernet monitor ether1
 ```
 
-**Catatan Migrasi:** Sniffer dan mirroring pada v6 dan v7 memiliki sintaks yang hampir sama. Setelah migrasi, perlu dipastikan mirroring dinonaktifkan setelah troubleshooting selesai agar tidak membebani switch. Berkas pcap pada v7 dapat diunduh melalui menu Files untuk dibuka pada Wireshark.
+**Catatan Migrasi:** Sniffer dan mirroring pada v6 dan v7 memiliki sintaks yang hampir sama. Setelah migrasi, perlu dipastikan mirroring dinonaktifkan setelah troubleshooting selesai agar tidak membebani switch. File pcap pada v7 dapat diunduh melalui menu Files untuk dibuka pada Wireshark.
 
-### Studi Kasus: Satu PC Tidak Dapat Mengakses Server, Sedangkan PC Lain Dapat Mengakses
+### Studi Kasus: Satu komputer Tidak Dapat Mengakses Server, Sedangkan komputer Lain Dapat Mengakses
 
-Pada sebuah laboratorium, satu PC tidak dapat melakukan ping ke server, sedangkan PC lain pada VLAN yang sama dapat melakukan ping. Administrator tidak langsung mengganti switch. Langkah yang dilakukan adalah sebagai berikut:
+Pada sebuah laboratorium, satu komputer tidak dapat melakukan ping ke server, sedangkan komputer lain pada VLAN yang sama dapat melakukan ping. Administrator tidak langsung mengganti switch. Langkah yang dilakukan adalah sebagai berikut:
 1. Pemeriksaan kabel dengan cable-test menunjukkan pair 3 open.
 2. Kabel diganti, tetapi permasalahan tetap terjadi.
-3. Pemeriksaan bridge host menunjukkan MAC PC tidak muncul.
+3. Pemeriksaan bridge host menunjukkan MAC komputer tidak muncul.
 4. Pemeriksaan port menunjukkan port dalam kondisi disabled akibat BPDU guard setelah teknisi secara tidak sengaja menghubungkan switch kecil.
-5. Port diaktifkan kembali setelah kabel switch kecil dilepas, dan PC kembali normal.
+5. Port diaktifkan kembali setelah kabel switch kecil dilepas, dan komputer kembali normal.
 
 **Pembelajaran operasional:** Urutan diagnostik Layer 2 adalah lapisan fisik, port, MAC table, VLAN, kemudian Layer 3. Diagnostik tidak boleh langsung menuju Layer 3 sebelum Layer 2 dipastikan berfungsi.
 
 > **Aspek operasional Tools:** Pemeriksaan neighbor, host table, log, dan cable-test untuk port yang sering bermasalah perlu dilakukan secara berkala. Hasil sniffer hanya disimpan pada saat troubleshooting dan tidak dibiarkan berjalan secara terus-menerus.
-
 
 ## Modul 11 — SwOS: Switching dengan Sistem Operasi Ringan
 
@@ -1070,12 +1080,12 @@ Pada sebuah laboratorium, satu PC tidak dapat melakukan ping ke server, sedangka
 # Export konfigurasi secara manual setelah setiap perubahan
 ```
 
-**Catatan Migrasi:** Migrasi dari RouterOS v6 ke v7 tidak mengubah cara dual-boot, tetapi SwOS yang digunakan perlu disesuaikan dengan model perangkat. CRS1xx dan CRS2xx menggunakan SwOS 1.x, sedangkan CRS3xx dan CRS5xx menggunakan SwOS 2.x. Pencadangan konfigurasi RouterOS perlu dilakukan sebelum berpindah ke SwOS, karena SwOS tidak memiliki pencadangan otomatis.
+**Catatan Migrasi:** Migrasi dari RouterOS v6 ke v7 tidak mengubah cara dual-boot, tetapi SwOS yang digunakan perlu disesuaikan dengan model perangkat. CRS1xx dan CRS2xx menggunakan SwOS 1.x, sedangkan CRS3xx dan CRS5xx menggunakan SwOS 2.x. Backup konfigurasi RouterOS perlu dilakukan sebelum berpindah ke SwOS, karena SwOS tidak memiliki backup otomatis.
 
 ### Studi Kasus: Migrasi Dua Switch Access dari RouterOS ke SwOS
 
 Sebuah institusi pendidikan memiliki dua switch access yang hanya digunakan untuk switching dan tidak memerlukan routing atau firewall. Administrator memutuskan untuk melakukan migrasi ke SwOS agar manajemen lebih ringan dan throughput lebih konsisten. Langkah migrasi yang dilakukan adalah sebagai berikut:
-1. Pencadangan konfigurasi RouterOS.
+1. Backup konfigurasi RouterOS.
 2. Pencatatan VLAN, RSTP priority, dan port mapping.
 3. Boot ke SwOS dan konfigurasi VLAN dan RSTP yang sama melalui web.
 4. Pengujian ping antar VLAN dan failover RSTP.
@@ -1085,12 +1095,11 @@ Hasilnya, CPU switch menurun dari 40 persen menjadi 5 persen, dan staf tata usah
 
 **Pembelajaran operasional:** Pemilihan sistem operasi perlu disesuaikan dengan kebutuhan. Apabila hanya diperlukan switching, SwOS sering kali lebih sederhana dan stabil.
 
-> **Aspek operasional SwOS:** SwOS tidak memiliki pencadangan otomatis seperti RouterOS. Konfigurasi perlu diexport secara manual setelah setiap perubahan yang signifikan. Berkas pencadangan disimpan pada folder dokumentasi.
-
+> **Aspek operasional SwOS:** SwOS tidak memiliki backup otomatis seperti RouterOS. Konfigurasi perlu diexport secara manual setelah setiap perubahan yang signifikan. Berkas backup disimpan pada folder dokumentasi.
 
 ## Lampiran A — Template Konfigurasi Core Lengkap
 
-Template ini menggabungkan Modul 1 hingga Modul 8 dalam satu konfigurasi core. Template ini digunakan sebagai titik awal dan perlu disesuaikan dengan kebutuhan.
+Template tersebut menggabungkan Modul 1 hingga Modul 8 dalam satu konfigurasi core. Template tersebut digunakan sebagai titik awal dan perlu disesuaikan dengan kebutuhan.
 
 ```routeros
 # === SW-CORE - TEMPLATE LENGKAP ===
@@ -1127,16 +1136,3 @@ Template ini menggabungkan Modul 1 hingga Modul 8 dalam satu konfigurasi core. T
 /system backup save name=core-final
 /export file=core-final
 ```
-
-## Lampiran B — Troubleshooting Cepat per Gejala
-
-| Gejala | Kemungkinan Penyebab | Langkah Pertama |
-| --- | --- | --- |
-| Tidak dapat melakukan ping sama sekali | Kabel, port disabled, belum masuk bridge | Pemeriksaan cable-test, /interface print, /interface bridge host print |
-| Ping kecil berhasil, ping besar gagal | MTU tidak konsisten | /tool ping size=8972 do-not-fragment, pemeriksaan L2MTU |
-| Dapat melakukan ping dalam satu VLAN, tidak dapat antar VLAN | VLAN filtering, routing, firewall | Pemeriksaan /interface bridge vlan print dan /ip route print |
-| Jaringan tiba-tiba lambat secara menyeluruh | Loop, broadcast storm | Pemeriksaan /interface bridge port print, log loop, pelepasan kabel yang baru dipasang |
-| Memperoleh alamat IP yang salah | DHCP server liar | Pemeriksaan DHCP snooping, /ip dhcp-server lease print |
-| PC baru tidak memperoleh alamat IP | Port security, BPDU guard, DHCP snooping | Pemeriksaan /log print dan /interface bridge port print |
-| Video call terputus-putus | QoS belum diatur, bandwidth habis | Pemeriksaan /queue simple print stats dan /interface monitor |
-| PoE tidak menyala | Mode PoE, daya tidak mencukupi, kabel | /interface ethernet poe monitor, pemeriksaan prioritas |
