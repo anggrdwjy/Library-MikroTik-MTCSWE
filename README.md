@@ -2,19 +2,19 @@
 
 ## Daftar Isi
 
-- [Modul 1 — Introduction](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-1--introduction-konsep-dasar-layer-2-forwarding)
-- [Modul 2 — MTU](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-2--mtu-pengelolaan-mtu-l2mtu-dan-jumbo-frame)
-- [Modul 3 — VLAN](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-3--vlan-implementasi-vlan-8021q-dan-8021ad)
-- [Modul 4 — Spanning Tree Protocol](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-4--spanning-tree-protocol-pencegahan-loop-dengan-mempertahankan-redundansi)
-- [Modul 5 — Link Aggregation](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-5--link-aggregation-penggabungan-tautan-untuk-kapasitas-dan-redundansi)
-- [Modul 6 — Port Isolation](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-6--port-isolation-isolasi-port-tanpa-penambahan-vlan-berlebihan)
-- [Modul 7 — QoS](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-7--qos-penerapan-quality-of-service-pada-layer-2)
-- [Modul 8 — Layer 2 Security](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-8--layer-2-security-pengamanan-jaringan-layer-2)
-- [Modul 9 — PoE](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-9--poe-penyaluran-daya-melalui-kabel-jaringan)
-- [Modul 10 — Tools](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-10--tools-diagnostik-dan-pemantauan-layer-2)
-- [Modul 11 — SwOS](https://github.com/anggrdwjy/Library-MikroTik-MTCSWE/blob/main/README.md#modul-11--swos-switching-dengan-sistem-operasi-ringan)
+- [Modul 1. Introduction]( #modul-1-introduction---konsep-dasar-layer-2-forwarding)
+- [Modul 2. MTU]( #modul-2-mtu---pengelolaan-mtu-l2mtu-dan-jumbo-frame)
+- [Modul 3. VLAN]( #modul-3-vlan---implementasi-vlan-8021q-dan-8021ad)
+- [Modul 4. Spanning Tree Protocol]( #modul-4-spanning-tree-protocol---pencegahan-loop-dengan-mempertahankan-redundansi)
+- [Modul 5. Link Aggregation]( #modul-5-link-aggregation---penggabungan-interface-untuk-kapasitas-dan-redundansi)
+- [Modul 6. Port Isolation]( #modul-6-port-isolation---isolasi-port-tanpa-penambahan-vlan-berlebihan)
+- [Modul 7. QoS]( #modul-7-qos---penerapan-quality-of-service-pada-layer-2)
+- [Modul 8. Layer 2 Security]( #modul-8-layer-2-security---pengamanan-jaringan-layer-2)
+- [Modul 9. PoE]( #modul-9-poe---penyaluran-daya-melalui-kabel-jaringan)
+- [Modul 10. Tools]( #modul-10-tools---diagnostik-dan-pemantauan-layer-2)
+- [Modul 11. SwOS]( #modul-11-swos---switching-dengan-sistem-operasi-ringan)
 
-## Modul 1 — Introduction: Konsep Dasar Layer 2 Forwarding
+## Modul 1. Introduction - Konsep Dasar Layer 2 Forwarding
 
 **Tujuan:** Memahami cara switch meneruskan frame, konsep unicast, multicast, dan broadcast, pembelajaran MAC address, serta perbedaan antara bridge pada RouterOS, switch chip pada RouterBOARD, dan SwOS.
 
@@ -97,9 +97,9 @@ Pada hari berikutnya, printer tidak dapat dijangkau melalui ping. Setelah dilaku
 
 **Pembelajaran operasional:** MAC table merupakan instrumen diagnostik pertama untuk permasalahan Layer 2. Apabila MAC tidak dipelajari, permasalahan umumnya terdapat pada lapisan fisik atau port belum dimasukkan ke dalam bridge.
 
-> **Kesalahan yang sering terjadi pada Modul 1:** Port tidak ditambahkan ke bridge sehingga komunikasi tidak dapat berlangsung. Selain hal tersebut, pembuatan dua bridge yang saling tumpang tindih dapat menyebabkan loop. Disarankan untuk menggunakan satu bridge utama pada setiap switch, kecuali terdapat alasan khusus.
+> **Kesalahan yang sering terjadi pada   1:** Port tidak ditambahkan ke bridge sehingga komunikasi tidak dapat berlangsung. Selain hal tersebut, pembuatan dua bridge yang saling tumpang tindih dapat menyebabkan loop. Disarankan untuk menggunakan satu bridge utama pada setiap switch, kecuali terdapat alasan khusus.
 
-## Modul 2 — MTU: Pengelolaan MTU, L2MTU, dan Jumbo Frame
+## Modul 2. MTU - Pengelolaan MTU, L2MTU, dan Jumbo Frame
 
 **Tujuan:** Memahami MTU, L2MTU, jumbo frame, dan dampak ketidakkonsistenan MTU terhadap jaringan.
 
@@ -184,7 +184,7 @@ Server backup pada ether21 dan NAS pada ether22 sering mengalami kegagalan saat 
 
 ---
 
-## Modul 3 — VLAN: Implementasi VLAN 802.1Q dan 802.1ad
+## Modul 3. VLAN - Implementasi VLAN 802.1Q dan 802.1ad
 
 **Tujuan:** Menguasai VLAN 802.1Q, 802.1ad (QinQ), VLAN pada bridge, VLAN pada switch chip, dan inter-VLAN routing.
 
@@ -325,7 +325,7 @@ Sebuah institusi pendidikan memiliki satu switch core dan dua switch access. Keb
 
 > **Kesalahan yang sering terjadi pada Modul 3:** Mengaktifkan `vlan-filtering=yes` sebelum tabel VLAN lengkap sehingga akses terputus dan diperlukan reset melalui MAC WinBox. Disarankan untuk selalu menyiapkan akses MAC atau console serta backup sebelum mengaktifkan filtering.
 
-## Modul 4 — Spanning Tree Protocol: Pencegahan Loop dengan Mempertahankan Redundansi
+## Modul 4. Spanning Tree Protocol - Pencegahan Loop dengan Mempertahankan Redundansi
 
 **Tujuan:** Memahami STP, RSTP, MSTP, BPDU, serta keamanan spanning tree.
 
@@ -436,7 +436,7 @@ Sebuah gedung pendidikan memiliki dua uplink antar lantai untuk redundansi. Pada
 
 > **Aspek operasional STP:** Nilai default priority 0x8000 tidak boleh dibiarkan sama pada seluruh switch. Root dan secondary harus ditentukan. Dokumentasi mengenai switch yang berperan sebagai root pada setiap gedung perlu dipelihara. Topologi STP perlu diperiksa setiap bulan atau setelah terjadi perubahan kabel.
 
-## Modul 5 — Link Aggregation: Penggabungan Tautan untuk Kapasitas dan Redundansi
+## Modul 5. Link Aggregation - Penggabungan Tautan untuk Kapasitas dan Redundansi
 
 **Tujuan:** Memahami bonding pada RouterOS, mode bonding, dan kompatibilitas dengan agregasi statis dari vendor lain.
 
@@ -526,7 +526,7 @@ Laboratorium komputer dengan 60 komputer sering mengalami kelambatan saat seluru
 > **Catatan bonding:** Port fisik yang telah menjadi slave tidak dimasukkan ke bridge. Yang dimasukkan ke bridge adalah interface bonding. Kedua sisi harus menggunakan mode yang sesuai, yaitu LACP dengan LACP atau static dengan static.
 
 
-## Modul 6 — Port Isolation: Isolasi Port Tanpa Penambahan VLAN Berlebihan
+## Modul 6. Port Isolation - Isolasi Port Tanpa Penambahan VLAN Berlebihan
 
 **Tujuan:** Memahami bridge horizon pada RouterOS dan port isolation pada switch chip.
 
@@ -614,7 +614,7 @@ Pengelola apartemen memasang satu switch untuk 12 kamar. Pada kondisi awal, anta
 > **Aspek operasional port isolation:** Nilai horizon untuk klien dan uplink perlu didokumentasikan. Apabila terdapat printer bersama, printer tersebut harus ditempatkan pada horizon uplink agar dapat diakses oleh seluruh kamar.
 
 
-## Modul 7 — QoS: Penerapan Quality of Service pada Layer 2
+## Modul 7. QoS - Penerapan Quality of Service pada Layer 2
 
 **Tujuan:** Memahami QoS Layer 2 802.1p, prioritas pada bridge dan CRS, serta traffic shaping dengan queue dan pembatasan bandwidth pada switch chip.
 
@@ -699,7 +699,7 @@ Sebuah kantor dengan 30 staf mengalami gangguan pada rapat daring setiap pukul 1
 > **Aspek operasional QoS:** Disarankan untuk menggunakan tiga kelas, yaitu tinggi untuk voice dan video, normal untuk bisnis, dan rendah untuk pengunduhan dan tamu. Jumlah kelas yang terlalu banyak menyebabkan konfigurasi sulit dipelihara.
 
 
-## Modul 8 — Layer 2 Security: Pengamanan Jaringan Layer 2
+## Modul 8. Layer 2 Security - Pengamanan Jaringan Layer 2
 
 **Tujuan:** Menguasai IGMP snooping, DHCP snooping, loop protect, traffic storm control, Layer 2 firewall, BPDU guard, ARP modes, port security, 802.1X, dan switch security.
 
@@ -832,7 +832,7 @@ Dua insiden terjadi dalam satu minggu. Pertama, seorang siswa membawa router Wi-
 **Pembelajaran operasional:** Keamanan Layer 2 harus diaktifkan sebelum insiden terjadi, bukan setelah insiden. DHCP snooping, BPDU guard, dan loop protect perlu diaktifkan pada seluruh port access sejak awal.
 
 
-## Modul 9 — PoE: Penyaluran Daya Melalui Kabel Jaringan
+## Modul 9. PoE - Penyaluran Daya Melalui Kabel Jaringan
 
 **Tujuan:** Memahami mode PoE pada RouterOS, prioritas PoE, kompatibilitas PoE, dan monitoring PoE.
 
@@ -914,7 +914,7 @@ Sebuah hotel memasang dua switch PoE untuk 24 access point dan 16 kamera. Total 
 
 > **Aspek operasional PoE:** Kabel PoE perlu diberi label dengan jelas. Perangkat non-PoE tidak boleh dihubungkan ke port forced-on. Cadangan PSU perlu disiapkan apabila switch PoE merupakan perangkat kritis.
 
-## Modul 10 — Tools: Diagnostik dan Pemantauan Layer 2
+## Modul 10. Tools - Diagnostik dan Pemantauan Layer 2
 
 **Tujuan:** Menguasai Layer 2 diagnostic tools dan port mirroring.
 
@@ -1005,7 +1005,7 @@ Pada sebuah laboratorium, satu komputer tidak dapat melakukan ping ke server, se
 
 > **Aspek operasional Tools:** Pemeriksaan neighbor, host table, log, dan cable-test untuk port yang sering bermasalah perlu dilakukan secara berkala. Hasil sniffer hanya disimpan pada saat troubleshooting dan tidak dibiarkan berjalan secara terus-menerus.
 
-## Modul 11 — SwOS: Switching dengan Sistem Operasi Ringan
+## Modul 11. SwOS - Switching dengan Sistem Operasi Ringan
 
 **Tujuan:** Memahami SwOS, kompatibilitas dual-boot pada RouterBOARD, instalasi SwOS, manajemen SwOS, dan konfigurasi fitur Layer 2 pada SwOS.
 
